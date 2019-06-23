@@ -1245,4 +1245,41 @@
 		</property>
 	</bean>
 
+	<!-- Cozitahs -->
+
+	<bean id="cozitah1" class ="domain.Cozitah">
+		<property name = "ticker" value = "HOLA"/>
+		<property name = "moment" value = "06/23/2019 09:00"/>
+		<property name = "body" value = "body1"/>
+		<property name = "isFinal" value = "true"/>
+		<property name = "picture" value = "https://i.imgur.com/TslDk56.png"/>
+		<property name = "audit" ref ="audit1"/>
+	</bean>
+
+	<bean id="cozitah2" class ="domain.Cozitah">
+		<property name = "ticker" value = "HOLA2"/>
+		<property name = "moment" value = "05/22/2019 09:00"/>
+		<property name = "body" value = "body1"/>
+		<property name = "isFinal" value = "true"/>
+		<property name = "picture" value = "https://i.imgur.com/TslDk56.png"/>
+		<property name = "audit" ref ="audit1"/>
+	</bean>
+
+	<bean id="cozitah3" class ="domain.Cozitah">
+		<property name = "ticker" value = "HOLA3"/>
+		<property name = "moment" value = "04/22/2019 09:00"/>
+		<property name = "body" value = "body1"/>
+		<property name = "isFinal" value = "true"/>
+		<property name = "picture" value = "https://i.imgur.com/TslDk56.png"/>
+		<property name = "audit" ref ="audit1"/>
+	</bean>
+
+	<bean id="cozitah4" class ="domain.Cozitah">
+		<property name = "ticker" value = "HOLA4"/>
+		<property name = "body" value = "body1"/>
+		<property name = "isFinal" value = "false"/>
+		<property name = "picture" value = "https://i.imgur.com/TslDk56.png"/>
+		<property name = "audit" ref ="audit1"/>
+	</bean>
+
 </beans>

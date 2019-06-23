@@ -15,7 +15,7 @@
     <head>
     </head>
     <body>
-    <form:form action ="auditor/cozitah/edit.do" modelAttribute="cozitah">
+    <form:form action ="auditor/cozitah/create.do" modelAttribute="cozitah">
 
         <form:hidden path="id"/>
         <form:hidden path="audit"/>
@@ -28,15 +28,11 @@
         <br>
         <acme:submit name="final" code="cozitah.save.final"/>&nbsp
         <acme:submit name="draft" code="cozitah.save.draft"/>&nbsp
-        <jstl:if test="${!cozitah.isFinal}">
-            <acme:submit name="delete" code="cozitah.delete"/>
-        </jstl:if>
         <acme:cancel url="/"
-                     code="configuration.edit.cancel"/>&nbsp
+                     code="cozitah.cancel"/>&nbsp
 
 
     </form:form>
     </body>
     </html>
 </security:authorize>
-

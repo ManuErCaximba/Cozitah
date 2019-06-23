@@ -20,46 +20,71 @@
 <%@ taglib prefix="acme" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
 
+<style type="text/css">
+    .GREEN{
+        background-color: Indigo;
+    }
+    .ORANGE{
+        background-color: DarkSlateGray;
+    }
+    .RED{
+        background-color: PapayaWhip;
+    }
+</style>
+
 <display:table name="cozitahs" id="row" requestURI="${requestURI}"
                pagesize="5" class="displaytag">
 
+    <jstl:choose>
+        <jstl:when test="${row.moment!=null}">
+            <jstl:choose>
+                <jstl:when test="${row.moment > haceUnMes }">
+                    <jstl:set var="css" value="GREEN"/>
+                </jstl:when>
+                <jstl:when test="${row.moment < haceUnMes && row.moment > haceDosMeses}">
+                    <jstl:set var="css" value="ORANGE"/>
+                </jstl:when>
+                <jstl:otherwise>
+                    <jstl:set var="css" value="RED" />
+                </jstl:otherwise>
+            </jstl:choose>
+        </jstl:when>
+        <jstl:otherwise>
+            <jstl:set var="css" value="null" />
+        </jstl:otherwise>
+    </jstl:choose>
 
     <spring:message code="cozitah.ticker" var="ticker"/>
-    <display:column property="ticker" title="${ticker}"/>
+    <display:column class="${css}" property="ticker" title="${ticker}"/>
 
     <spring:message code="cozitah.moment" var="moment"/>
     <jstl:choose>
-        <jstl:when test="${lang=es}">
-            <display:column property="moment">
-                <fmt:formatDate value="${moment}" pattern="dd-MM-yy hh:mm" />
-            </display:column>
+        <jstl:when test="${lang=='es'}">
+            <display:column class="${css}" property="moment" title="${moment}" format="{0,date,dd-MM-yy HH:mm}"/>
         </jstl:when>
         <jstl:otherwise>
-            <display:column property="moment">
-                <fmt:formatDate value="${moment}" pattern="yy/MM/dd hh:mm" />
-            </display:column>
+            <display:column class="${css}" property="moment" title="${moment}" format="{0,date,yy/MM/dd HH:mm}"/>
         </jstl:otherwise>
     </jstl:choose>
 
-    <spring:message code="cozitah.draft" var="draft"/>
-    <spring:message code="cozitah.final" var="final"/>
+    <display:column class="${css}">
+        <acme:cancel code="cozitah.show" url="/auditor/cozitah/show.do?id=${row.id}"/>
+    </display:column>
 
-    <jstl:choose>
-        <jstl:when test="${row.isFinal}">
-            <display:column property="moment" title="${final}"/>
-        </jstl:when>
-        <jstl:otherwise>
-        <display:column property="moment" title="${draft}"/>
-        </jstl:otherwise>
-    </jstl:choose>
-
-    <jstl:if test="${!row.isFinal}">
-        <display:column>
-            <acme:cancel code="cozitah.edit" url="/company/cozitah/edit.do?id=${row.id}"/>
-        </display:column>
+    <display:column class="${css}">
+    <jstl:if test="${!row.isFinal && auditor != null}">
+            <acme:cancel code="cozitah.edit" url="/auditor/cozitah/edit.do?id=${row.id}"/>
     </jstl:if>
+    </display:column>
+
+    <display:column class="${css}">
+    <jstl:if test="${!row.isFinal && auditor != null}">
+            <acme:cancel code="cozitah.delete" url="/auditor/cozitah/delete.do?id=${row.id}"/>
+    </jstl:if>
+    </display:column>
 
 </display:table>
-
+<br>
+<br>
 <acme:cancel url="/" code="item.goBack"/>
 

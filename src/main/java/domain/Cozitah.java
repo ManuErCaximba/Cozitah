@@ -1,28 +1,31 @@
 package domain;
 
 import datatype.Url;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.URL;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+@Entity
+@Access(AccessType.PROPERTY)
 public class Cozitah extends DomainEntity{
 
     private String ticker;
     private Date moment;
     private String body;
     private boolean isFinal;
-    private Url picture;
+    private String picture;
 
     //Relations
     private Audit audit;
-    private Company company;
 
-    @NotBlank
+    @NotNull
     public boolean getIsFinal() {
         return this.isFinal;
     }
@@ -40,7 +43,8 @@ public class Cozitah extends DomainEntity{
         this.ticker = ticker;
     }
 
-    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     public Date getMoment() {
         return moment;
     }
@@ -50,6 +54,7 @@ public class Cozitah extends DomainEntity{
     }
 
     @NotBlank
+    @Length(max = 100)
     public String getBody() {
         return this.body;
     }
@@ -58,18 +63,19 @@ public class Cozitah extends DomainEntity{
         this.body = body;
     }
 
-    public Url getPicture() {
+    @URL
+    public String getPicture() {
         return this.picture;
     }
 
-    public void setPicture(Url picture) {
+    public void setPicture(String picture) {
         this.picture = picture;
     }
 
     //Relationships
 
     @Valid
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     public Audit getAudit() {
         return audit;
     }
@@ -78,13 +84,4 @@ public class Cozitah extends DomainEntity{
         this.audit = audit;
     }
 
-    @Valid
-    @ManyToOne(optional = false)
-    public Company getCompany() {
-        return this.company;
-    }
-
-    public void setCompany(Company company){
-        this.company = company;
-    }
 }

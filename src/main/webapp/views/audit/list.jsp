@@ -69,6 +69,20 @@
             <spring:message code="audit.show"/>
         </a>
     </display:column>
+    <spring:message code="cozitah.create" var="create2"/>
+    <display:column title="${create2}">
+        <a
+                href="auditor/cozitah/create.do?auditId=${row.id}">
+            <spring:message code="cozitah.create"/>
+        </a>
+    </display:column>
+    <spring:message code="master.page.cozitah.list" var="list"/>
+    <display:column title="${list}">
+        <a
+                href="auditor/cozitah/list.do?auditId=${row.id}">
+            <spring:message code="cozitah.show"/>
+        </a>
+    </display:column>
 </display:table>
 
 <acme:cancel url="/" code="audit.back"/>

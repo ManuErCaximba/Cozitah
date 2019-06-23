@@ -1,5 +1,6 @@
 package services;
 
+import domain.Audit;
 import domain.Auditor;
 import domain.Company;
 import domain.Cozitah;
@@ -26,7 +27,7 @@ public class CozitahService {
     @Autowired
     private ActorService actorService;
     @Autowired
-    private CompanyService companyService;
+    private AuditorService auditorService;
 
     //Validator
     @Autowired
@@ -35,9 +36,10 @@ public class CozitahService {
 
     //Simple CRUD Methods
     public Cozitah create() {
+        Assert.isTrue(this.actorService.getActorLogged()
+                .getUserAccount().getAuthorities().iterator().next().getAuthority().equals("AUDITOR"));
         Cozitah result;
         result = new Cozitah();
-        result.setMoment(new Date());
         result.setIsFinal(false);
         return result;
     }
@@ -52,13 +54,13 @@ public class CozitahService {
 
     public Cozitah saveAsDraft(Cozitah cozitah) {
         Assert.notNull(cozitah);
-        Company company = this.companyService.findOne(this.actorService.getActorLogged().getId());
+        Assert.isTrue(this.actorService.getActorLogged()
+                .getUserAccount().getAuthorities().iterator().next().getAuthority().equals("AUDITOR"));
+        Auditor auditor= this.auditorService.findOne(this.actorService.getActorLogged().getId());
 
-        this.assertDeCompany(cozitah, company);
+        this.assertDeCompany(cozitah, auditor);
 
         Assert.isTrue(!cozitah.getIsFinal());
-        cozitah.setCompany(company);
-        cozitah.setIsFinal(true);
         cozitah = this.cozitahRepository.save(cozitah);
 
         return cozitah;
@@ -66,11 +68,12 @@ public class CozitahService {
 
     public Cozitah saveAsFinal(Cozitah cozitah) {
         Assert.notNull(cozitah);
-        Company company = this.companyService.findOne(this.actorService.getActorLogged().getId());
+        Auditor auditor= this.auditorService.findOne(this.actorService.getActorLogged().getId());
 
-        this.assertDeCompany(cozitah, company);
+        this.assertDeCompany(cozitah, auditor);
 
-        cozitah.setCompany(company);
+        cozitah.setMoment(new Date());
+        cozitah.setIsFinal(true);
         cozitah = this.cozitahRepository.save(cozitah);
 
         return cozitah;
@@ -80,9 +83,10 @@ public class CozitahService {
     public Cozitah reconstruct(final Cozitah cozitah, final BindingResult binding) {
         Cozitah result;
 
-        result = this.cozitahRepository.findOne(cozitah.getId());
-
-        cozitah.setVersion(result.getVersion());
+        if (cozitah.getId() != 0){
+            result = this.cozitahRepository.findOne(cozitah.getId());
+            cozitah.setVersion(result.getVersion());
+        }
 
         result = cozitah;
         this.validator.validate(cozitah, binding);
@@ -94,21 +98,28 @@ public class CozitahService {
 
     public void delete(final Cozitah cozitah) {
         Assert.notNull(cozitah);
-        Company company = this.companyService.findOne(this.actorService.getActorLogged().getId());
-        this.assertDeCompany(cozitah, company);
+        Auditor auditor = this.auditorService.findOne(this.actorService.getActorLogged().getId());
+        this.assertDeCompany(cozitah, auditor);
         Assert.isTrue(!cozitah.getIsFinal());
         this.cozitahRepository.delete(cozitah);
     }
 
-    public Collection<Cozitah> getCozitahsByCompany(int id){
-        return this.cozitahRepository.getCozitahsByCompany(id);
+    public void deleteF(final Cozitah cozitah) {
+        this.cozitahRepository.delete(cozitah);
     }
 
-    public void assertDeCompany(Cozitah cozitah, Company company){
+    public Collection<Cozitah> getDraftCozitahsByAuditorOf(int id, int auditId){
+        return this.cozitahRepository.getDraftCozitahsByAuditorOf(id, auditId);
+    }
+    public Collection<Audit> getAuditsByAuditor(int id) { return this.cozitahRepository.getAuditsByAuditor(id);}
+    public Collection<Cozitah> getFinalCozitahOf(int auditId) { return this.cozitahRepository.getFinalCozitahOf(auditId);}
+    public Collection<Cozitah> getCozitahByAudit(int auditId) { return this.cozitahRepository.getCozitahsByAudit(auditId);}
+
+    public void assertDeCompany(Cozitah cozitah, Auditor auditor){
         if(cozitah.getId()!=0) {
             Assert.isTrue(this.actorService.getActorLogged()
-                    .getUserAccount().getAuthorities().iterator().next().getAuthority().equals("COMPANY"));
-            Assert.isTrue(company.equals(cozitah.getCompany()));
+                    .getUserAccount().getAuthorities().iterator().next().getAuthority().equals("AUDITOR"));
+            Assert.isTrue(auditor.equals(cozitah.getAudit().getAuditor()));
         }
     }
 }

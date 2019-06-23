@@ -1,9 +1,6 @@
 package services;
 
-import domain.Actor;
-import domain.Audit;
-import domain.Auditor;
-import domain.Position;
+import domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -24,6 +21,8 @@ public class AuditService {
     private AuditRepository auditRepository;
     @Autowired
     private ActorService actorService;
+    @Autowired
+    private CozitahService cozitahService;
     @Autowired
     private AuditorService auditorService;
     @Autowired
@@ -116,6 +115,10 @@ public class AuditService {
         Assert.isTrue(audit.getAuditor().equals(auditor));
         Assert.isTrue(!audit.getIsFinal());
         Assert.notNull(audit);
+
+        Collection<Cozitah> cozitahs = this.cozitahService.getCozitahByAudit(audit.getId());
+
+        for(Cozitah c: cozitahs) this.cozitahService.deleteF(c);
 
         Position p = this.getPositionByAudit(audit.getId());
         p.getAudits().remove(audit);

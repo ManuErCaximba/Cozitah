@@ -16,14 +16,24 @@
 
 <tiles-definitions>
 
-	<definition name="configuration/administrator/edit" extends="master.page">
-		<put-attribute name="title" value="Cambiar configuracion de la pagina web" />
-		<put-attribute name="body" value="/views/configuration/edit.jsp" />
+	<definition name="company/cozitah/create" extends="master.page">
+		<put-attribute name="title" value="Crear nueva cozitah" />
+		<put-attribute name="body" value="/views/cozitah/create.jsp" />
 	</definition>
 
-	<definition name="configuration/administrator/show" extends="master.page">
-		<put-attribute name="title" value="Configuracion" />
-		<put-attribute name="body" value="/views/configuration/show.jsp" />
+	<definition name="company/cozitah/edit" extends="master.page">
+		<put-attribute name="title" value="Editar cozitah" />
+		<put-attribute name="body" value="/views/cozitah/edit.jsp" />
+	</definition>
+
+	<definition name="company/cozitah/list" extends="master.page">
+		<put-attribute name="title" value="Lista de cozitah" />
+		<put-attribute name="body" value="/views/cozitah/list.jsp" />
+	</definition>
+
+	<definition name="company/cozitah/show" extends="master.page">
+		<put-attribute name="title" value="Ver cozitah" />
+		<put-attribute name="body" value="/views/cozitah/show.jsp" />
 	</definition>
 
 </tiles-definitions>
