@@ -9,34 +9,30 @@
 <%@taglib prefix="display" uri="http://displaytag.sf.net"%>
 <%@taglib prefix="acme" tagdir="/WEB-INF/tags" %>
 
-<security:authorize access="hasRole('AUDITOR')">
+<security:authorize access="hasRole('COMPANY')">
     <!DOCTYPE>
     <html>
     <head>
     </head>
     <body>
-    <form:form action ="auditor/cozitah/edit.do" modelAttribute="cozitah">
+    <form:form action ="auditor/debuk/create.do" modelAttribute="debuk">
 
         <form:hidden path="id"/>
         <form:hidden path="audit"/>
 
         <!-- Single areas -->
 
-        <acme:textboxbs code="cozitah.body" path="body"/>
-        <acme:textboxbs code="cozitah.picture" path="picture"/>
+        <acme:textboxbs code="debuk.body" path="body"/>
+        <acme:textboxbs code="debuk.picture" path="picture"/>
         <br>
         <br>
-        <acme:submit name="final" code="cozitah.save.final"/>&nbsp
-        <acme:submit name="draft" code="cozitah.save.draft"/>&nbsp
-        <jstl:if test="${!cozitah.isFinal}">
-            <acme:submit name="delete" code="cozitah.delete"/>
-        </jstl:if>
+        <acme:submit name="final" code="debuk.save.final"/>&nbsp
+        <acme:submit name="draft" code="debuk.save.draft"/>&nbsp
         <acme:cancel url="/"
-                     code="configuration.edit.cancel"/>&nbsp
+                     code="debuk.cancel"/>&nbsp
 
 
     </form:form>
     </body>
     </html>
 </security:authorize>
-

@@ -18,15 +18,17 @@ import java.util.Collection;
 import java.util.Date;
 
 @Controller
-@RequestMapping("auditor/cozitah")
-public class CozitahController extends AbstractController {
+@RequestMapping("auditor/debuk")
+public class DebukController extends AbstractController {
 
     @Autowired
-    private CozitahService cozitahService;
+    private DebukService debukService;
     @Autowired
     private ActorService actorService;
     @Autowired
     private AuditorService auditorService;
+    @Autowired
+    private CompanyService companyService;
     @Autowired
     private AuditService auditService;
 
@@ -34,28 +36,28 @@ public class CozitahController extends AbstractController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ModelAndView list(@RequestParam final int auditId) {
         ModelAndView result;
-        Collection<Cozitah> cozitahs;
-        Auditor auditor = this.auditorService.findOne(this.actorService.getActorLogged().getId());
-        result = new ModelAndView("auditor/cozitah/list");
+        Collection<Debuk> debuks;
+        Company company = this.companyService.findOne(this.actorService.getActorLogged().getId());
+        result = new ModelAndView("auditor/debuk/list");
 
-        //Sacar cozitahs que sean de la auditor
-        cozitahs = this.cozitahService.getFinalCozitahOf(auditId);
-        if (auditor != null)
-            cozitahs.addAll(this.cozitahService.getDraftCozitahsByAuditorOf(auditor.getId(), auditId));
+        //Sacar debuks que sean de la auditor
+        debuks = this.debukService.getFinalDebukOf(auditId);
+        if (company != null)
+            debuks.addAll(this.debukService.getDraftDebuksByCompanyOf(company.getId(), auditId));
 
 
         //Lenguaje
         String lang = LocaleContextHolder.getLocale().getLanguage();
 
         //Meter en ModelAndView
-        result.addObject("cozitahs", cozitahs);
-        result.addObject("auditor", auditor);
+        result.addObject("debuks", debuks);
+        result.addObject("company", company);
         result.addObject("lang", lang);
         final Date haceUnMes = this.restarMesesFecha(new Date(), 1);
         final Date haceDosMeses = this.restarMesesFecha(new Date(), 2);
         result.addObject("haceUnMes", haceUnMes);
         result.addObject("haceDosMeses", haceDosMeses);
-        result.addObject("requestURI", "auditor/cozitahs/list.do?auditId="+auditId);
+        result.addObject("requestURI", "auditor/debuks/list.do");
 
         return result;
     }
@@ -64,14 +66,14 @@ public class CozitahController extends AbstractController {
     @RequestMapping(value = "/show", method = RequestMethod.GET)
     public ModelAndView display(@RequestParam final int id) {
         ModelAndView result;
-        Cozitah cozitah;
+        Debuk debuk;
         Actor actor = this.actorService.getActorLogged();
-        Auditor auditor = null;
+        Company company = null;
 
         try {
-            cozitah = this.cozitahService.findOne(id);
-            if(cozitah.getAudit().getAuditor().equals(this.auditorService.findOne(actor.getId())))
-                auditor = this.auditorService.findOne(actor.getId());
+            debuk = this.debukService.findOne(id);
+            if(debuk.getCompany().equals(this.companyService.findOne(actor.getId())))
+                company = this.companyService.findOne(actor.getId());
         } catch (final Exception e) {
             result = new ModelAndView("redirect:/");
             return result;
@@ -80,10 +82,10 @@ public class CozitahController extends AbstractController {
         //Lenguaje
         String lang = LocaleContextHolder.getLocale().getLanguage();
 
-        result = new ModelAndView("auditor/cozitah/show");
+        result = new ModelAndView("auditor/debuk/show");
         result.addObject("lang", lang);
-        result.addObject("cozitah", cozitah);
-        result.addObject("auditor", auditor);
+        result.addObject("debuk", debuk);
+        result.addObject("company", company);
 
         return result;
     }
@@ -92,28 +94,28 @@ public class CozitahController extends AbstractController {
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public ModelAndView create(@RequestParam int auditId) {
         ModelAndView result;
-        Cozitah cozitah;
+        Debuk debuk;
 
-        cozitah = this.cozitahService.create();
+        debuk = this.debukService.create();
 
-        cozitah.setAudit(this.auditService.findOne(auditId));
-        Assert.notNull(cozitah);
-        result = this.createModelAndView(cozitah);
+        debuk.setAudit(this.auditService.findOne(auditId));
+        Assert.notNull(debuk);
+        result = this.createModelAndView(debuk);
 
         return result;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST, params = "draft")
-    public ModelAndView createAsDraft(@ModelAttribute("cozitah") Cozitah cozitah, final BindingResult binding) {
+    public ModelAndView createAsDraft(@ModelAttribute("debuk") Debuk debuk, final BindingResult binding) {
         ModelAndView result;
 
         try {
-            cozitah = this.cozitahService.reconstruct(cozitah, binding);
+            debuk = this.debukService.reconstruct(debuk, binding);
             if (binding.hasErrors())
-                result = this.createModelAndView(cozitah);
+                result = this.createModelAndView(debuk);
             else {
-                this.cozitahService.saveAsDraft(cozitah);
-                result = new ModelAndView("redirect:/audit/auditor/list.do");
+                this.debukService.saveAsDraft(debuk);
+                result = new ModelAndView("redirect:/position/listNotLogged.do");
             }
         } catch (final Throwable oops) {
             result = new ModelAndView("redirect:/");
@@ -122,18 +124,16 @@ public class CozitahController extends AbstractController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST, params = "final")
-    public ModelAndView createAsFinal(@ModelAttribute("cozitah") Cozitah cozitah, final BindingResult binding) {
+    public ModelAndView createAsFinal(@ModelAttribute("debuk") Debuk debuk, final BindingResult binding) {
         ModelAndView result;
-        Auditor auditor = this.auditorService.findOne(this.actorService.getActorLogged().getId());
 
         try {
-            Assert.isTrue(auditor.equals(cozitah.getAudit().getAuditor()));
-            cozitah = this.cozitahService.reconstruct(cozitah, binding);
+            debuk = this.debukService.reconstruct(debuk, binding);
             if (binding.hasErrors())
-                result = this.createModelAndView(cozitah);
+                result = this.createModelAndView(debuk);
             else {
-                this.cozitahService.saveAsFinal(cozitah);
-                result = new ModelAndView("redirect:/audit/auditor/list.do");
+                this.debukService.saveAsFinal(debuk);
+                result = new ModelAndView("redirect:/position/listNotLogged.do");
             }
         } catch (final Throwable oops) {
             result = new ModelAndView("redirect:/");
@@ -145,29 +145,27 @@ public class CozitahController extends AbstractController {
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public ModelAndView edit(@RequestParam int id) {
         ModelAndView result;
-        Cozitah cozitah;
+        Debuk debuk;
 
-        cozitah = this.cozitahService.findOne(id);
+        debuk = this.debukService.findOne(id);
 
-        Assert.notNull(cozitah);
-        result = this.editModelAndView(cozitah);
+        Assert.notNull(debuk);
+        result = this.editModelAndView(debuk);
 
         return result;
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST, params = "draft")
-    public ModelAndView saveAsDraft(@ModelAttribute("cozitah") Cozitah cozitah, final BindingResult binding) {
+    public ModelAndView saveAsDraft(@ModelAttribute("debuk") Debuk debuk, final BindingResult binding) {
         ModelAndView result;
-        Auditor auditor = this.auditorService.findOne(this.actorService.getActorLogged().getId());
 
         try {
-            Assert.isTrue(auditor.equals(cozitah.getAudit().getAuditor()));
-            cozitah = this.cozitahService.reconstruct(cozitah, binding);
+            debuk = this.debukService.reconstruct(debuk, binding);
             if (binding.hasErrors())
-                result = this.editModelAndView(cozitah);
+                result = this.editModelAndView(debuk);
             else {
-                this.cozitahService.saveAsDraft(cozitah);
-                result = new ModelAndView("redirect:/audit/auditor/list.do");
+                this.debukService.saveAsDraft(debuk);
+                result = new ModelAndView("redirect:/position/listNotLogged.do");
             }
         } catch (final Throwable oops) {
             result = new ModelAndView("redirect:/");
@@ -176,18 +174,16 @@ public class CozitahController extends AbstractController {
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST, params = "final")
-    public ModelAndView saveAsFinal(@ModelAttribute("cozitah") Cozitah cozitah, final BindingResult binding) {
+    public ModelAndView saveAsFinal(@ModelAttribute("debuk") Debuk debuk, final BindingResult binding) {
         ModelAndView result;
-        Auditor auditor = this.auditorService.findOne(this.actorService.getActorLogged().getId());
 
         try {
-            Assert.isTrue(auditor.equals(cozitah.getAudit().getAuditor()));
-            cozitah = this.cozitahService.reconstruct(cozitah, binding);
+            debuk = this.debukService.reconstruct(debuk, binding);
             if (binding.hasErrors())
-                result = this.editModelAndView(cozitah);
+                result = this.editModelAndView(debuk);
             else {
-                this.cozitahService.saveAsFinal(cozitah);
-                result = new ModelAndView("redirect:/audit/auditor/list.do");
+                this.debukService.saveAsFinal(debuk);
+                result = new ModelAndView("redirect:/position/listNotLogged.do");
             }
         } catch (final Throwable oops) {
             result = new ModelAndView("redirect:/");
@@ -199,11 +195,10 @@ public class CozitahController extends AbstractController {
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     public ModelAndView delete(@RequestParam int id) {
         ModelAndView result;
-        Cozitah cozitah = this.cozitahService.findOne(id);
-        int auditId = cozitah.getAudit().getId();
+        Debuk debuk = this.debukService.findOne(id);
         try {
-            this.cozitahService.delete(cozitah);
-            result = new ModelAndView("redirect:/audit/auditor/list.do");
+            this.debukService.delete(debuk);
+            result = new ModelAndView("redirect:/position/listNotLogged.do");
         } catch (final Throwable oops) {
             result = new ModelAndView("redirect:/");
         }
@@ -211,42 +206,38 @@ public class CozitahController extends AbstractController {
     }
 
     //MODEL AND VIEWS
-    protected ModelAndView createModelAndView(final Cozitah cozitah) {
+    protected ModelAndView createModelAndView(final Debuk debuk) {
         ModelAndView result;
 
-        result = this.createModelAndView(cozitah, null);
+        result = this.createModelAndView(debuk, null);
 
         return result;
     }
 
-    protected ModelAndView createModelAndView(final Cozitah cozitah, final String messageCode) {
+    protected ModelAndView createModelAndView(final Debuk debuk, final String messageCode) {
         ModelAndView result;
         Auditor auditor = this.auditorService.findOne(this.actorService.getActorLogged().getId());
-        Collection<Audit> audits = this.cozitahService.getAuditsByAuditor(auditor.getId());
 
-        result = new ModelAndView("auditor/cozitah/create");
-        result.addObject("cozitah", cozitah);
-        result.addObject("audits", audits);
+        result = new ModelAndView("auditor/debuk/create");
+        result.addObject("debuk", debuk);
         result.addObject("messageCode", messageCode);
 
         return result;
     }
-    protected ModelAndView editModelAndView(final Cozitah cozitah) {
+    protected ModelAndView editModelAndView(final Debuk debuk) {
         ModelAndView result;
 
-        result = this.editModelAndView(cozitah, null);
+        result = this.editModelAndView(debuk, null);
 
         return result;
     }
 
-    protected ModelAndView editModelAndView(final Cozitah cozitah, final String messageCode) {
+    protected ModelAndView editModelAndView(final Debuk debuk, final String messageCode) {
         ModelAndView result;
         Auditor auditor = this.auditorService.findOne(this.actorService.getActorLogged().getId());
-        Collection<Audit> audits = this.cozitahService.getAuditsByAuditor(auditor.getId());
 
-        result = new ModelAndView("auditor/cozitah/edit");
-        result.addObject("cozitah", cozitah);
-        result.addObject("audits", audits);
+        result = new ModelAndView("auditor/debuk/edit");
+        result.addObject("debuk", debuk);
         result.addObject("messageCode", messageCode);
 
         return result;

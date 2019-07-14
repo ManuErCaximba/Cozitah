@@ -838,6 +838,14 @@
 		<property name="auditor" ref="auditor3"/>
 	</bean>
 
+	<bean id="audit3" class ="domain.Audit">
+		<property name = "moment" value = "01/02/2020"/>
+		<property name = "text" value = "auditoría"/>
+		<property name = "score" value = "6"/>
+		<property name = "isFinal" value="true"/>
+		<property name="auditor" ref="auditor2"/>
+	</bean>
+
 	<!-- Messages -->
 
 	<bean id="message1" class ="domain.Message">
@@ -975,6 +983,11 @@
 		</property>
 		<property name = "applications">
 			<list>
+			</list>
+		</property>
+		<property name = "audits">
+			<list>
+				<ref bean = "audit3"/>
 			</list>
 		</property>
 	</bean>
@@ -1245,41 +1258,55 @@
 		</property>
 	</bean>
 
-	<!-- Cozitahs -->
+	<!-- Debuks -->
 
-	<bean id="cozitah1" class ="domain.Cozitah">
-		<property name = "ticker" value = "HOLA"/>
+	<bean id="debuk1TEST" class ="domain.Debuk">
+		<property name = "ticker" value = "1906/23-12345"/>
 		<property name = "moment" value = "06/23/2019 09:00"/>
 		<property name = "body" value = "body1"/>
 		<property name = "isFinal" value = "true"/>
 		<property name = "picture" value = "https://i.imgur.com/TslDk56.png"/>
 		<property name = "audit" ref ="audit1"/>
+		<property name = "company" ref ="company1"/>
 	</bean>
 
-	<bean id="cozitah2" class ="domain.Cozitah">
-		<property name = "ticker" value = "HOLA2"/>
+	<bean id="debuk2TEST" class ="domain.Debuk">
+		<property name = "ticker" value = "1905/22-23456"/>
 		<property name = "moment" value = "05/22/2019 09:00"/>
 		<property name = "body" value = "body1"/>
 		<property name = "isFinal" value = "true"/>
 		<property name = "picture" value = "https://i.imgur.com/TslDk56.png"/>
 		<property name = "audit" ref ="audit1"/>
+		<property name = "company" ref ="company1"/>
 	</bean>
 
-	<bean id="cozitah3" class ="domain.Cozitah">
-		<property name = "ticker" value = "HOLA3"/>
+	<bean id="debuk3TEST" class ="domain.Debuk">
+		<property name = "ticker" value = "1904/22-34567"/>
 		<property name = "moment" value = "04/22/2019 09:00"/>
 		<property name = "body" value = "body1"/>
 		<property name = "isFinal" value = "true"/>
 		<property name = "picture" value = "https://i.imgur.com/TslDk56.png"/>
-		<property name = "audit" ref ="audit1"/>
+		<property name = "audit" ref ="audit3"/>
+		<property name = "company" ref ="company2"/>
 	</bean>
 
-	<bean id="cozitah4" class ="domain.Cozitah">
-		<property name = "ticker" value = "HOLA4"/>
+	<bean id="debuk4TEST" class ="domain.Debuk">
+		<property name = "ticker" value = "1924/19-45678"/>
+		<property name = "moment" value = "04/22/2019 09:00"/>
+		<property name = "body" value = "body1"/>
+		<property name = "isFinal" value = "true"/>
+		<property name = "picture" value = "https://i.imgur.com/TslDk56.png"/>
+		<property name = "audit" ref ="audit3"/>
+		<property name = "company" ref ="company2"/>
+	</bean>
+
+	<bean id="debuk5" class ="domain.Debuk">
+		<property name = "ticker" value = "1924/19-45678"/>
 		<property name = "body" value = "body1"/>
 		<property name = "isFinal" value = "false"/>
 		<property name = "picture" value = "https://i.imgur.com/TslDk56.png"/>
-		<property name = "audit" ref ="audit1"/>
+		<property name = "audit" ref ="audit3"/>
+		<property name = "company" ref ="company2"/>
 	</bean>
 
 </beans>

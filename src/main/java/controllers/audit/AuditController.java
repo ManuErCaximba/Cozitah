@@ -2,9 +2,7 @@
 package controllers.audit;
 
 import controllers.AbstractController;
-import domain.Audit;
-import domain.Auditor;
-import domain.Position;
+import domain.*;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,10 +12,8 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import services.ActorService;
-import services.AuditService;
-import services.AuditorService;
-import services.PositionService;
+import security.LoginService;
+import services.*;
 
 import javax.validation.ValidationException;
 import java.util.Collection;
@@ -38,6 +34,12 @@ public class AuditController extends AbstractController {
 
     @Autowired
     private PositionService positionService;
+
+    @Autowired
+    private CompanyService companyService;
+
+    @Autowired
+    private DebukService debukService;
 
     @ExceptionHandler(BindException.class)
     public ModelAndView handleMismatchException(final BindException oops) {
@@ -67,12 +69,25 @@ public class AuditController extends AbstractController {
         ModelAndView result;
         Collection<Audit> audits;
         Position position;
+        Company company = null;
+        Auditor auditor = null;
+        boolean isCompany = false;
+
+
 
         try{
+            if(LoginService.getPrincipal()!=null) {
+                company = this.companyService.findOne(this.actorService.getActorLogged().getId());
+                auditor = this.auditorService.findOne(this.actorService.getActorLogged().getId());
+            }
             Assert.notNull(positionId);
             position = this.positionService.findOne(positionId);
             Assert.notNull(position);
             audits = this.auditService.getAuditsFinalByPosition(positionId);
+            if(company!=null && position.getCompany().equals(company)){
+                isCompany = true;
+            }
+
         }catch(Throwable oops){
             result = new ModelAndView("redirect:/position/listNotLogged.do");
             return result;
@@ -80,7 +95,9 @@ public class AuditController extends AbstractController {
 
         result = new ModelAndView("audit/list");
         result.addObject("audits", audits);
+        result.addObject("auditor", auditor);
         result.addObject("requestURI", "audit/list.do");
+        result.addObject("isCompany", isCompany);
         return result;
     }
 

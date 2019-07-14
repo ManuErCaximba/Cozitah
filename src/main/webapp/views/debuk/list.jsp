@@ -32,8 +32,8 @@
     }
 </style>
 
-<display:table name="cozitahs" id="row" requestURI="${requestURI}"
-               pagesize="5" class="displaytag">
+<display:table name="debuks" id="row" requestURI="${requestURI}"
+               pagesize="10" class="displaytag">
 
     <jstl:choose>
         <jstl:when test="${row.moment!=null}">
@@ -54,10 +54,10 @@
         </jstl:otherwise>
     </jstl:choose>
 
-    <spring:message code="cozitah.ticker" var="ticker"/>
+    <spring:message code="debuk.ticker" var="ticker"/>
     <display:column class="${css}" property="ticker" title="${ticker}"/>
 
-    <spring:message code="cozitah.moment" var="moment"/>
+    <spring:message code="debuk.moment" var="moment"/>
     <jstl:choose>
         <jstl:when test="${lang=='es'}">
             <display:column class="${css}" property="moment" title="${moment}" format="{0,date,dd-MM-yy HH:mm}"/>
@@ -68,18 +68,18 @@
     </jstl:choose>
 
     <display:column class="${css}">
-        <acme:cancel code="cozitah.show" url="/auditor/cozitah/show.do?id=${row.id}"/>
+        <acme:cancel code="debuk.show" url="/auditor/debuk/show.do?id=${row.id}"/>
     </display:column>
 
     <display:column class="${css}">
-    <jstl:if test="${!row.isFinal && auditor != null}">
-            <acme:cancel code="cozitah.edit" url="/auditor/cozitah/edit.do?id=${row.id}"/>
+    <jstl:if test="${!row.isFinal && company != null}">
+            <acme:cancel code="debuk.edit" url="/auditor/debuk/edit.do?id=${row.id}"/>
     </jstl:if>
     </display:column>
 
     <display:column class="${css}">
-    <jstl:if test="${!row.isFinal && auditor != null}">
-            <acme:cancel code="cozitah.delete" url="/auditor/cozitah/delete.do?id=${row.id}"/>
+    <jstl:if test="${!row.isFinal && company != null}">
+            <acme:cancel code="debuk.delete" url="/auditor/debuk/delete.do?id=${row.id}"/>
     </jstl:if>
     </display:column>
 

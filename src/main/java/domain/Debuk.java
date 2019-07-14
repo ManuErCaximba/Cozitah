@@ -14,7 +14,7 @@ import java.util.Date;
 
 @Entity
 @Access(AccessType.PROPERTY)
-public class Cozitah extends DomainEntity{
+public class Debuk extends DomainEntity{
 
     private String ticker;
     private Date moment;
@@ -24,6 +24,7 @@ public class Cozitah extends DomainEntity{
 
     //Relations
     private Audit audit;
+    private Company company;
 
     @NotNull
     public boolean getIsFinal() {
@@ -34,7 +35,7 @@ public class Cozitah extends DomainEntity{
         this.isFinal = isFinal;
     }
 
-    //@Pattern(regexp = "//d-//n")
+
     public String getTicker() {
         return this.ticker;
     }
@@ -84,4 +85,13 @@ public class Cozitah extends DomainEntity{
         this.audit = audit;
     }
 
+    @Valid
+    @OneToOne()
+    public Company getCompany() {
+        return this.company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
 }

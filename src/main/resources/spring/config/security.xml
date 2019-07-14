@@ -103,11 +103,11 @@
         <security:intercept-url pattern="/sponsorship/provider/show.do" access="hasRole('PROVIDER')"/>
         <security:intercept-url pattern="/sponsorship/provider/delete.do" access="hasRole('PROVIDER')"/>
 
-        <security:intercept-url pattern="/auditor/cozitah/list.do" access="permitAll"/>
-        <security:intercept-url pattern="/auditor/cozitah/create.do" access="hasRole('AUDITOR')"/>
-        <security:intercept-url pattern="/auditor/cozitah/edit.do" access="hasRole('AUDITOR')"/>
-        <security:intercept-url pattern="/auditor/cozitah/show.do" access="permitAll"/>
-        <security:intercept-url pattern="/auditor/cozitah/delete.do" access="hasRole('AUDITOR')"/>
+        <security:intercept-url pattern="/auditor/debuk/list.do" access="permitAll"/>
+        <security:intercept-url pattern="/auditor/debuk/create.do" access="hasRole('COMPANY')"/>
+        <security:intercept-url pattern="/auditor/debuk/edit.do" access="hasRole('COMPANY')"/>
+        <security:intercept-url pattern="/auditor/debuk/show.do" access="permitAll"/>
+        <security:intercept-url pattern="/auditor/debuk/delete.do" access="hasRole('COMPANY')"/>
 
         <security:intercept-url pattern="/gdpr/**" access="permitAll"/>
 

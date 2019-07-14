@@ -22,7 +22,7 @@ public class AuditService {
     @Autowired
     private ActorService actorService;
     @Autowired
-    private CozitahService cozitahService;
+    private DebukService debukService;
     @Autowired
     private AuditorService auditorService;
     @Autowired
@@ -116,9 +116,9 @@ public class AuditService {
         Assert.isTrue(!audit.getIsFinal());
         Assert.notNull(audit);
 
-        Collection<Cozitah> cozitahs = this.cozitahService.getCozitahByAudit(audit.getId());
+        Collection<Debuk> debuks = this.debukService.getDebukByAudit(audit.getId());
 
-        for(Cozitah c: cozitahs) this.cozitahService.deleteF(c);
+        for(Debuk c: debuks) this.debukService.deleteF(c);
 
         Position p = this.getPositionByAudit(audit.getId());
         p.getAudits().remove(audit);

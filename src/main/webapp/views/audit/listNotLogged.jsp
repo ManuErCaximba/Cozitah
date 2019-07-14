@@ -32,6 +32,17 @@
     <spring:message code="audit.score" var="score"/>
     <display:column property="score" title="${score}"/>
 
+    <display:column>
+    <jstl:if test="${isCompany==true}">
+        <acme:cancel code="debuk.create" url="/auditor/debuk/create.do?auditId=${row.id}"/>
+    </jstl:if>
+    </display:column>
+    <display:column>
+    <jstl:if test="${isCompany==true || auditor.id==row.auditor.id}">
+        <acme:cancel code="master.page.debuk.list" url="/auditor/debuk/list.do?auditId=${row.id}"/>
+    </jstl:if>
+    </display:column>
+
 </display:table>
 
 <acme:cancel url="position/listNotLogged.do" code="audit.back"/>
